@@ -41,6 +41,13 @@ def bfs_1d(start: int, goal: int, min_state: int, max_state: int) -> Optional[Li
     - Prints every expansion and each generated child.
     Bounds [min_state, max_state] avoid infinite expansion on the integers.
     """
+
+    # --- Parameter validation ---
+    for name, value in [("start", start), ("goal", goal),
+                        ("min_state", min_state), ("max_state", max_state)]:
+        if not isinstance(value, int):
+            raise TypeError(f"Parameter '{name}' must be an integer, got {type(value).__name__}: {value}")
+
     # 1) Frontier as FIFO queue with the root node
     root = Node(state=start, parent=None, action=None, depth=0, cost=0)
     frontier: deque[Node] = deque([root])
