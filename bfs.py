@@ -61,7 +61,7 @@ def bfs_1d(start: int, goal: int, min_state: int, max_state: int) -> Optional[Li
     # 3) Main loop
     while frontier:
         current = frontier.popleft()  # FIFO: take the oldest node
-        print(f"\n[POP ] expand state={current.state} depth={current.depth} cost={current.cost}")
+        print(f"\n[DEQUEUE] expand state={current.state} depth={current.depth} cost={current.cost}")
 
         # Goal test
         if current.state == goal:
@@ -91,8 +91,8 @@ def bfs_1d(start: int, goal: int, min_state: int, max_state: int) -> Optional[Li
                 cost=current.cost + 1,   # unit step cost
             )
             frontier.append(child)
-            print(f"[PUSH] generated child state={child.state} via action={action} depth={child.depth} cost={child.cost}")
-
+            print(f"[ENQUEUE] generated child state={child.state} via action={action} depth={child.depth} cost={child.cost}")
+        print(f"[FRONTIER] {[n.state for n in frontier]}")
     print("\n[FAIL] no solution within given bounds")
     return None
 
