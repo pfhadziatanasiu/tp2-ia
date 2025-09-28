@@ -18,7 +18,7 @@ El algoritmo A* utiliza una cola de prioridad ordenada por la función f(n) = g(
 Para ejecutarlo:
 python3 a-star.py
 
-Requisitos
+Requisitos:
  • Python 3.7 o superior
  • Probado en Python 3.12
  • No requiere librerías externas (solo collections, dataclasses, heapq, typing)
