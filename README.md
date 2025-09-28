@@ -7,7 +7,7 @@ Algoritmos implementados:
 Búsqueda Exhaustiva (BFS)
 El algoritmo Breadth-First Search (BFS) recorre los estados por niveles utilizando una cola FIFO. Garantiza encontrar la solución más corta en cantidad de pasos siempre que todas las acciones tengan el mismo costo. Su implementación se encuentra en el archivo bfs.py. 
 
-Para ejecutarlo: 
+Para ejecutarlo:
 python3 bfs.py
 
 El programa imprime las expansiones realizadas, el estado de la frontera y finalmente el camino reconstruido hasta la meta.
@@ -15,13 +15,13 @@ El programa imprime las expansiones realizadas, el estado de la frontera y final
 Búsqueda Heurística (A*)
 El algoritmo A* utiliza una cola de prioridad ordenada por la función f(n) = g(n) + h(n), donde g(n) es el costo real acumulado y h(n) es la heurística de distancia absoluta al objetivo. Esta estrategia permite guiar la búsqueda de manera más eficiente que BFS, reduciendo el número de nodos explorados y garantizando una solución óptima en costo. Su implementación se encuentra en el archivo a-star.py. 
 
-Para ejecutarlo: 
+Para ejecutarlo:
 python3 a-star.py
 
 Requisitos
-	• Python 3.7 o superior
-	• Probado en Python 3.12
-	• No requiere librerías externas (solo collections, dataclasses, heapq, typing)
+ • Python 3.7 o superior
+ • Probado en Python 3.12
+ • No requiere librerías externas (solo collections, dataclasses, heapq, typing)
 
 Evidencia
 
