@@ -59,6 +59,22 @@ def reconstruct_path(goal_node: Node) -> List[Tuple[int, Optional[int]]]:
     return path
 
 
+def print_open(open_heap, open_best_f):
+    """
+    Pretty-print OPEN as a sorted snapshot of the heap entries (state, f, depth).
+    Excludes stale entries (worse than the best known f for that state).
+    Note: Debug view only; does not modify the heap.
+    """
+    snapshot = []
+    for f, depth, state, _node in open_heap:
+        # keep only non-stale entries
+        if f <= open_best_f.get(state, float("inf")):
+            snapshot.append((state, f, depth))
+    snapshot.sort(key=lambda t: (t[1], t[2], t[0]))  # by f, then depth, then state
+    pretty = [f"(state={s}, f={f}, depth={d})" for (s, f, d) in snapshot]
+    print("[OPEN] now: ", "[" + ", ".join(pretty) + "]")
+
+
 # -----------------------------
 # A* with configurable actions (OPEN/CLOSED by f = g + h)
 # -----------------------------
@@ -87,32 +103,38 @@ def astar_1d(start: int, goal: int, min_state: int, max_state: int,
     # Track best f in OPEN (to detect/skip stale heap entries)
     open_best_f: Dict[int, int] = {start: f_root}
 
-    # CLOSED stores best f already expanded for each state
+    # CLOSED: per course requirement we track best f that has been expanded per state
     closed_f: Dict[int, int] = {}
 
-    print(f"[OPEN ] push root: state={start}, g={root.cost}, h={h_abs_distance(start, goal)}, f={f_root}")
+    print(f"[OPEN ] insert root: state={start}, g={root.cost}, h={h_abs_distance(start, goal)}, f={f_root}")
 
     while open_heap:
-        # Pop node with smallest f
+        # Show OPEN at the start of the iteration (before extract)
+        print_open(open_heap, open_best_f)
+
+        # Extract node with smallest f
         f_curr, _, _, current = heapq.heappop(open_heap)
+        # Keep OPEN map consistent with the heap view
+        open_best_f.pop(current.state, None)
 
         # Skip stale heap entries (a better f for this state is already in OPEN)
+        # (If we removed its map entry above, a stale one won't pass this check anyway)
         if open_best_f.get(current.state, float("inf")) < f_curr:
             print(f"[SKIP ] stale entry for state={current.state} (better f already in OPEN)")
             continue
 
-        print(f"\n[POP  ] state={current.state}, g={current.cost}, "
+        print(f"\n[EXTRACT] state={current.state}, g={current.cost}, "
               f"h={h_abs_distance(current.state, goal)}, f={f_curr}, depth={current.depth}")
 
-        # Goal test
+        # Goal test (goal-on-extract)
         if current.state == goal:
             print("[GOAL ] goal reached. Reconstructing path...")
             return reconstruct_path(current)
 
-        # Move to CLOSED with its best f
+        # Move to CLOSED with its best f (course requirement)
         closed_f[current.state] = f_curr
         print(f"[CLOSE] add state={current.state} with f={f_curr}")
-        print(f"        CLOSED now: {closed_f}")
+        print(f"[CLOSED] {closed_f}")
 
         # Expand successors
         for nxt_state, act in successors_1d(current.state, actions):
@@ -149,8 +171,9 @@ def astar_1d(start: int, goal: int, min_state: int, max_state: int,
             heapq.heappush(open_heap, (f_child, child.depth, child.state, child))
             open_best_f[nxt_state] = f_child
 
-            print(f"[PUSH ] child state={child.state} via action={act} "
+            print(f"[INSERT] child state={child.state} via action={act} "
                   f"g={g_child}, h={h_child}, f={f_child}, depth={child.depth}")
+            print_open(open_heap, open_best_f)
 
     print("\n[FAIL ] no solution within given bounds")
     return None
@@ -161,7 +184,7 @@ def astar_1d(start: int, goal: int, min_state: int, max_state: int,
 # -----------------------------
 if __name__ == "__main__":
     # Pass actions explicitly (e.g., allow +/-1 and +/-2 steps)
-    path = astar_1d(start=0, goal=5, min_state=-5, max_state=5, actions=[-2, -1, 1, 2])
+    path = astar_1d(start=0, goal=2, min_state=-2, max_state=2, actions=[-2, -1, 1, 2])
     if path is not None:
         print("\n[PATH] start -> goal (state, action_that_produced_state):")
         for st, act in path:
